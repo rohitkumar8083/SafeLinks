@@ -75,15 +75,13 @@ function RiskGauge({ scan }: { scan: ScanResponse }) {
       >
         <path className="gauge-base" d="M25 108 A85 85 0 0 1 195 108" />
         <path
-          className="gauge-safe"
+          className={cn("gauge-safe", isSafe && "active")}
           d="M25 108 A85 85 0 0 1 56 43"
-          style={isSafe ? { filter: "drop-shadow(0 0 8px hsl(142 71% 45% / 0.8))", strokeWidth: 10 } : undefined}
         />
         <path className="gauge-warn" d="M61 38 A85 85 0 0 1 159 38" />
         <path
-          className="gauge-danger"
+          className={cn("gauge-danger", isHighRisk && "active")}
           d="M164 43 A85 85 0 0 1 195 108"
-          style={isHighRisk ? { filter: "drop-shadow(0 0 8px hsl(0 84% 60% / 0.8))", strokeWidth: 10 } : undefined}
         />
       </svg>
       <div className="gauge-score">

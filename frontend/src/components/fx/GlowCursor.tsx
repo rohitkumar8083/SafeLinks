@@ -43,8 +43,6 @@ export function GlowCursor() {
         y: smoothY,
         translateX: "-50%",
         translateY: "-50%",
-        background: "radial-gradient(circle, hsl(173 80% 40% / 0.08) 0%, transparent 70%)",
-        mixBlendMode: "screen",
       }}
     />
   );

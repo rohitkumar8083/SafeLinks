@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { Check, CheckCategory, CheckId, ScanResponse, Severity } from "../../lib/api";
 import { useCapabilities } from "../../lib/motion/useCapabilities";
+import { useTheme } from "../../app/theme";
 
 const CATEGORY_ICONS: Record<CheckCategory, LucideIcon> = {
   phishing: Fish,
@@ -38,7 +39,14 @@ interface ScanConstellationProps {
 
 export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProps) {
   const { reducedMotion } = useCapabilities();
+  const { theme } = useTheme();
   const [hoveredCheckId, setHoveredCheckId] = useState<string | null>(null);
+
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   const isScanning = ["queued", "running"].includes(scan.status);
 
@@ -86,7 +94,9 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
           pointerEvents: "none",
           opacity: isScanning ? 0.75 : 0,
           transition: "opacity 0.6s ease",
-          background: "conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 270deg, hsl(173 80% 45% / 0.04) 300deg, hsl(173 80% 45% / 0.22) 360deg)",
+          background: isDark
+            ? "conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 270deg, hsl(173 80% 45% / 0.04) 300deg, hsl(173 80% 45% / 0.22) 360deg)"
+            : "conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 270deg, hsl(173 80% 35% / 0.02) 300deg, hsl(173 80% 35% / 0.14) 360deg)",
           filter: "blur(4px)",
           animation: isScanning && !reducedMotion ? "radarSweepAnim 2.8s linear infinite" : "none",
         }}
@@ -109,20 +119,20 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
           rx={rx}
           ry={ry}
           fill="none"
-          stroke="hsl(173 80% 40% / 0.2)"
+          stroke={isDark ? "hsl(173 80% 40% / 0.2)" : "hsl(173 80% 32% / 0.26)"}
           strokeWidth="1.5"
           strokeDasharray="4 6"
         />
 
         <g transform={`translate(${cx - 18}, ${cy - 18})`}>
-          <circle cx="18" cy="18" r="20" fill="var(--card)" stroke="hsl(173 80% 40% / 0.45)" strokeWidth="1.5" />
+          <circle cx="18" cy="18" r="20" fill="var(--card)" stroke={isDark ? "hsl(173 80% 40% / 0.45)" : "hsl(173 80% 32% / 0.35)"} strokeWidth="1.5" />
           <Shield
             width="22"
             height="22"
             x="7"
             y="7"
             color="var(--primary)"
-            style={{ filter: "drop-shadow(0 0 8px var(--primary))" }}
+            style={{ filter: isDark ? "drop-shadow(0 0 8px var(--primary))" : "drop-shadow(0 1px 3px hsl(173 80% 32% / 0.25))" }}
           />
         </g>
 
@@ -181,7 +191,7 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
                 y2={ny}
                 stroke={nodeColor}
                 strokeWidth={isHovered ? 2.2 : 1.2}
-                strokeOpacity={isHovered ? 0.75 : 0.25}
+                strokeOpacity={isDark ? (isHovered ? 0.75 : 0.25) : (isHovered ? 0.85 : 0.42)}
                 strokeDasharray={isDone ? undefined : "3 3"}
               />
 
@@ -202,7 +212,7 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
                 transition={{ type: "spring", stiffness: 350, damping: 22 }}
               >
                 {(isHovered || (isDone && check.severity === "critical")) && (
-                  <circle cx={nx} cy={ny} r="20" fill={nodeColor} opacity="0.25" />
+                  <circle cx={nx} cy={ny} r={isDark ? 20 : 18} fill={nodeColor} opacity={isDark ? 0.25 : 0.14} />
                 )}
 
                 <circle
@@ -212,7 +222,7 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
                   fill={isDone ? nodeColor : isSkippedOrError ? "hsl(38 92% 50% / 0.15)" : "var(--solid)"}
                   stroke={nodeColor}
                   strokeWidth={isHovered ? 2.5 : 1.8}
-                  fillOpacity={isDone ? 0.22 : 0.9}
+                  fillOpacity={isDone ? (isDark ? 0.22 : 0.12) : 0.9}
                 />
 
                 <g transform={`translate(${nx - 7.5}, ${ny - 7.5})`}>

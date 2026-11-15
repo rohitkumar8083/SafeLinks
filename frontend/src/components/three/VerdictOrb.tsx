@@ -405,9 +405,131 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
 
     let prevMode: VisualMode = visualModeRef.current;
     let transitionTime = 1.0;
+    let currentIsDark: boolean | null = null;
+
+    const updateThemeStyles = (isDark: boolean) => {
+      if (currentIsDark === isDark) return;
+      currentIsDark = isDark;
+
+      if (isDark) {
+        hemiLight.intensity = 1.2;
+        hemiLight.color.setHex(0xffffff);
+        hemiLight.groundColor.setHex(0x071e22);
+        dirLight1.intensity = 1.8;
+        dirLight2.intensity = 1.1;
+
+        shieldMat.color.setHex(0x052e25);
+        shieldMat.metalness = 0.88;
+        shieldMat.roughness = 0.16;
+
+        fracturedMat.color.setHex(0x180206);
+        fracturedMat.metalness = 0.92;
+        fracturedMat.roughness = 0.14;
+
+        checkMat.color.setHex(0xffffff);
+        checkMat.emissive.setHex(0x34d399);
+        checkMat.emissiveIntensity = 1.8;
+
+        xMat.color.setHex(0xffffff);
+        xMat.emissive.setHex(0xff1e40);
+
+        edgesMat.blending = THREE.AdditiveBlending;
+        edgesMat.opacity = 0.85;
+
+        safeRingMat.blending = THREE.AdditiveBlending;
+        safeRingMat.color.setHex(0x10b981);
+        safeRingMat.opacity = 0.75;
+
+        safePMat.blending = THREE.AdditiveBlending;
+        safePMat.color.setHex(0x34d399);
+
+        dangerEdgeMat.blending = THREE.AdditiveBlending;
+        dangerEdgeMat.color.setHex(0xff3b5c);
+        dangerEdgeMat.opacity = 0.9;
+
+        dangerRing1Mat.blending = THREE.AdditiveBlending;
+        dangerRing1Mat.color.setHex(0xff1e40);
+        dangerRing1Mat.opacity = 0.85;
+
+        dangerRing2Mat.blending = THREE.AdditiveBlending;
+        dangerRing2Mat.color.setHex(0xff4d6d);
+        dangerRing2Mat.opacity = 0.55;
+
+        shardMat.color.setHex(0x7f0914);
+        shardMat.emissive.setHex(0xef4444);
+
+        emberMat.blending = THREE.AdditiveBlending;
+        emberMat.color.setHex(0xff2e54);
+      } else {
+        hemiLight.intensity = 2.4;
+        hemiLight.color.setHex(0xffffff);
+        hemiLight.groundColor.setHex(0xf1f5f9);
+        dirLight1.intensity = 2.2;
+        dirLight2.intensity = 1.4;
+
+        shieldMat.color.setHex(0x0f766e);
+        shieldMat.metalness = 0.45;
+        shieldMat.roughness = 0.22;
+
+        fracturedMat.color.setHex(0x991b1b);
+        fracturedMat.metalness = 0.55;
+        fracturedMat.roughness = 0.18;
+
+        checkMat.color.setHex(0xffffff);
+        checkMat.emissive.setHex(0x059669);
+        checkMat.emissiveIntensity = 0.85;
+
+        xMat.color.setHex(0xffffff);
+        xMat.emissive.setHex(0xdc2626);
+
+        edgesMat.blending = THREE.NormalBlending;
+        edgesMat.opacity = 0.95;
+
+        safeRingMat.blending = THREE.NormalBlending;
+        safeRingMat.color.setHex(0x059669);
+        safeRingMat.opacity = 0.9;
+
+        safePMat.blending = THREE.NormalBlending;
+        safePMat.color.setHex(0x047857);
+
+        dangerEdgeMat.blending = THREE.NormalBlending;
+        dangerEdgeMat.color.setHex(0xb91c1c);
+        dangerEdgeMat.opacity = 0.95;
+
+        dangerRing1Mat.blending = THREE.NormalBlending;
+        dangerRing1Mat.color.setHex(0xdc2626);
+        dangerRing1Mat.opacity = 0.9;
+
+        dangerRing2Mat.blending = THREE.NormalBlending;
+        dangerRing2Mat.color.setHex(0xef4444);
+        dangerRing2Mat.opacity = 0.75;
+
+        shardMat.color.setHex(0xb91c1c);
+        shardMat.emissive.setHex(0xef4444);
+
+        emberMat.blending = THREE.NormalBlending;
+        emberMat.color.setHex(0xdc2626);
+      }
+
+      shieldMat.needsUpdate = true;
+      fracturedMat.needsUpdate = true;
+      edgesMat.needsUpdate = true;
+      safeRingMat.needsUpdate = true;
+      safePMat.needsUpdate = true;
+      dangerEdgeMat.needsUpdate = true;
+      dangerRing1Mat.needsUpdate = true;
+      dangerRing2Mat.needsUpdate = true;
+      shardMat.needsUpdate = true;
+      emberMat.needsUpdate = true;
+      xMat.needsUpdate = true;
+      checkMat.needsUpdate = true;
+    };
 
     return {
       update: (delta: number, time: number) => {
+        const isDark = document.documentElement.classList.contains("dark");
+        updateThemeStyles(isDark);
+
         const mode = visualModeRef.current;
 
         if (mode !== prevMode) {
@@ -442,8 +564,8 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
 
         if (isMalicious) {
           // Dynamic crimson lighting
-          pointLight.color.setHex(0xff1e40);
-          dirLight1.color.setHex(0xff3b5c);
+          pointLight.color.setHex(isDark ? 0xff1e40 : 0xdc2626);
+          dirLight1.color.setHex(isDark ? 0xff3b5c : 0xb91c1c);
 
           // Animate danger cyber rings
           dangerRing1Mesh.rotation.z += delta * 0.9;
@@ -463,15 +585,17 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
           const pulse = beatCycle < 0.15 ? Math.sin(beatCycle * Math.PI * 6.6) * 0.08 : 0;
           const curScale = 1.0 + pulse;
           fracturedGroup.scale.set(curScale, curScale, curScale);
-          fracturedMat.emissiveIntensity = 0.7 + pulse * 0.5;
-          xMat.emissiveIntensity = 2.4 + pulse * 0.8;
+          const baseFracturedEmissive = isDark ? 0.7 : 0.22;
+          const baseXEmissive = isDark ? 2.4 : 0.85;
+          fracturedMat.emissiveIntensity = baseFracturedEmissive + pulse * 0.35;
+          xMat.emissiveIntensity = baseXEmissive + pulse * 0.5;
         } else {
           // Non-danger states
           const targetColor = new THREE.Color(COLOR_MAP[mode]);
           shieldMat.emissive.lerp(targetColor, 0.08);
           edgesMat.color.lerp(targetColor, 0.08);
           pointLight.color.lerp(targetColor, 0.08);
-          dirLight1.color.setHex(0x5eead4);
+          dirLight1.color.setHex(isDark ? 0x5eead4 : 0x0f766e);
 
           checkMesh.visible = mode === "likely_safe";
           exclGroup.visible = mode === "suspicious";
@@ -480,10 +604,10 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
           if (mode === "likely_safe") {
             safeRingMesh.rotation.z += delta * 0.55;
             shieldMesh.rotation.y += delta * 0.18;
-            shieldMat.emissiveIntensity = 0.55 + Math.sin(time * 2.0) * 0.2;
+            shieldMat.emissiveIntensity = (isDark ? 0.55 : 0.18) + Math.sin(time * 2.0) * 0.12;
           } else if (mode === "suspicious") {
             shieldMesh.rotation.z = Math.sin(time * 3.0) * 0.04;
-            shieldMat.emissiveIntensity = 0.5 + Math.sin(time * 10) * 0.2;
+            shieldMat.emissiveIntensity = (isDark ? 0.5 : 0.2) + Math.sin(time * 10) * 0.15;
           }
         }
 

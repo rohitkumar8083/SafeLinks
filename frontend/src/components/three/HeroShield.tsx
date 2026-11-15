@@ -276,6 +276,99 @@ export function HeroShield(props: HeroShieldState) {
     let chainAngle = 0;
     let launchProgress = 0;
     let shakeTimer = 0;
+    let currentIsDark: boolean | null = null;
+
+    const updateThemeStyles = (isDark: boolean) => {
+      if (currentIsDark === isDark) return;
+      currentIsDark = isDark;
+
+      if (isDark) {
+        hemiLight.intensity = 1.1;
+        hemiLight.color.setHex(0x2dd4bf);
+        hemiLight.groundColor.setHex(0x051b20);
+        dirLight1.intensity = 1.8;
+        dirLight2.intensity = 1.2;
+        pointLight.intensity = 2.0;
+
+        shieldMat.color.setHex(0x062826);
+        shieldMat.metalness = 0.88;
+        shieldMat.roughness = 0.18;
+
+        innerMat.color.setHex(0x08373d);
+        innerMat.metalness = 0.82;
+        innerMat.roughness = 0.22;
+
+        edgesMat.blending = THREE.AdditiveBlending;
+        edgesMat.color.setHex(0x2dd4bf);
+        edgesMat.opacity = 0.9;
+
+        innerEdgesMat.blending = THREE.AdditiveBlending;
+        innerEdgesMat.color.setHex(0x5eead4);
+
+        checkMat.color.setHex(0x5eead4);
+        checkMat.emissive.setHex(0x2dd4bf);
+        checkMat.emissiveIntensity = 0.75;
+
+        linkMat.color.setHex(0x0f766e);
+        linkMat.metalness = 0.9;
+        linkMat.roughness = 0.2;
+
+        lineMat.blending = THREE.AdditiveBlending;
+        lineMat.color.setHex(0x2dd4bf);
+        lineMat.opacity = 0.35;
+
+        pMat.blending = THREE.AdditiveBlending;
+        pMat.color.setHex(0x2dd4bf);
+        pMat.opacity = 0.65;
+      } else {
+        hemiLight.intensity = 2.4;
+        hemiLight.color.setHex(0xffffff);
+        hemiLight.groundColor.setHex(0xf1f5f9);
+        dirLight1.intensity = 2.4;
+        dirLight2.intensity = 1.4;
+        pointLight.intensity = 2.2;
+
+        shieldMat.color.setHex(0x0f766e);
+        shieldMat.metalness = 0.45;
+        shieldMat.roughness = 0.22;
+
+        innerMat.color.setHex(0x115e59);
+        innerMat.metalness = 0.5;
+        innerMat.roughness = 0.25;
+
+        edgesMat.blending = THREE.NormalBlending;
+        edgesMat.color.setHex(0x0d9488);
+        edgesMat.opacity = 0.95;
+
+        innerEdgesMat.blending = THREE.NormalBlending;
+        innerEdgesMat.color.setHex(0x14b8a6);
+
+        checkMat.color.setHex(0xffffff);
+        checkMat.emissive.setHex(0x0f766e);
+        checkMat.emissiveIntensity = 0.55;
+
+        linkMat.color.setHex(0x0d9488);
+        linkMat.metalness = 0.6;
+        linkMat.roughness = 0.25;
+
+        lineMat.blending = THREE.NormalBlending;
+        lineMat.color.setHex(0x0d9488);
+        lineMat.opacity = 0.55;
+
+        pMat.blending = THREE.NormalBlending;
+        pMat.color.setHex(0x0f766e);
+        pMat.opacity = 0.75;
+      }
+
+      shieldMat.needsUpdate = true;
+      innerMat.needsUpdate = true;
+      edgesMat.needsUpdate = true;
+      innerEdgesMat.needsUpdate = true;
+      checkMat.needsUpdate = true;
+      linkMat.needsUpdate = true;
+      lineMat.needsUpdate = true;
+      pMat.needsUpdate = true;
+    };
 
     // Permanent 3D showcase base rotation (not flat to camera!)
     const baseRotY = -0.32; // ~-18.3 degrees showing right extruded edge
@@ -284,6 +377,9 @@ export function HeroShield(props: HeroShieldState) {
 
     return {
       update: (delta: number, time: number) => {
+        const isDark = document.documentElement.classList.contains("dark");
+        updateThemeStyles(isDark);
+
         const state = stateRef.current;
 
         if (entranceScale < 0.999) {
@@ -335,16 +431,16 @@ export function HeroShield(props: HeroShieldState) {
           shakeTimer += delta * 24;
           shieldMesh.position.x = Math.sin(shakeTimer) * 0.12;
           shieldMat.emissive.setHex(0xef4444);
-          shieldMat.emissiveIntensity = 0.8;
+          shieldMat.emissiveIntensity = isDark ? 0.8 : 0.4;
         } else {
           shakeTimer = 0;
           shieldMesh.position.x = 0;
           if (state.valid) {
             shieldMat.emissive.setHex(0x10b981);
-            shieldMat.emissiveIntensity = 0.75;
+            shieldMat.emissiveIntensity = isDark ? 0.75 : 0.35;
           } else {
             shieldMat.emissive.setHex(0x0d9488);
-            shieldMat.emissiveIntensity = state.armed ? 0.55 : 0.28;
+            shieldMat.emissiveIntensity = state.armed ? (isDark ? 0.55 : 0.28) : (isDark ? 0.28 : 0.16);
           }
         }
 
