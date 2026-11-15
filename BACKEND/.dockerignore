@@ -1,0 +1,33 @@
+# Git & Environments
+.git
+.gitignore
+.venv
+venv/
+ENV/
+
+# Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local secrets & configs
+.env
+.env.*
+!.env.example
+
+# Raw ML data
+app/ml/data/raw/
+app/ml/data/urls.csv
+
+# Tests & Scripts not needed at runtime
+tests/
+scripts/
+
+# Docs & Workspace
+*.md
+pyproject.toml
+requirements-dev.txt

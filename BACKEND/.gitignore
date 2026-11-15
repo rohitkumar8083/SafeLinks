@@ -1,0 +1,36 @@
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache & build
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+dist/
+build/
+*.egg-info/
+
+# Pytest & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ruff
+.ruff_cache/
+
+# ML models and data (preserve directory placeholders)
+app/ml/model/*
+!app/ml/model/.gitkeep
+app/ml/data/*
+!app/ml/data/.gitkeep
+!app/ml/data/README.md
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

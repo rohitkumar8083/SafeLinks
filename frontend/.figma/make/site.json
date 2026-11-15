@@ -1,0 +1,10 @@
+{
+  "description": "Check links before clicking with plain-language reports on phishing, malware, reputation, domain age, and SSL risks for everyday users.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

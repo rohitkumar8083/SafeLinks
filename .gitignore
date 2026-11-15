@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+.venv/
+BACKEND/.venv/
+env/
+venv/
+
+# Build and cache
+dist/
+build/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Logs & temp
+*.log
+*-debug.log*
+logs/
+.tmp-*
+mingit.zip
+
+# Environment
+.env*
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
