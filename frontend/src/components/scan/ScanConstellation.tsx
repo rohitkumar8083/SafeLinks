@@ -84,10 +84,11 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
           height: "24rem",
           borderRadius: "50%",
           pointerEvents: "none",
-          opacity: isScanning ? 1 : 0,
+          opacity: isScanning ? 0.75 : 0,
           transition: "opacity 0.6s ease",
-          background: "conic-gradient(from 0deg, transparent 0deg, transparent 270deg, hsl(173 80% 40% / 0.18) 360deg)",
-          animation: isScanning && !reducedMotion ? "radarSweepAnim 3s linear infinite" : "none",
+          background: "conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 270deg, hsl(173 80% 45% / 0.04) 300deg, hsl(173 80% 45% / 0.22) 360deg)",
+          filter: "blur(4px)",
+          animation: isScanning && !reducedMotion ? "radarSweepAnim 2.8s linear infinite" : "none",
         }}
       />
 
@@ -159,7 +160,7 @@ export function ScanConstellation({ scan, onSelectCheck }: ScanConstellationProp
           return (
             <g
               key={check.id}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", outline: "none" }}
               onMouseEnter={() => setHoveredCheckId(check.id)}
               onMouseLeave={() => setHoveredCheckId(null)}
               onClick={() => handleNodeClick(check)}

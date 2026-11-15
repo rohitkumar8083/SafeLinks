@@ -346,6 +346,32 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
     const icoMesh = new THREE.Mesh(icoGeo, icoMat);
     rootGroup.add(icoMesh);
 
+    // Dynamic scanning laser sweep beam
+    const beamGeo = new THREE.PlaneGeometry(2.4, 0.12);
+    const beamCanvas = document.createElement("canvas");
+    beamCanvas.width = 128;
+    beamCanvas.height = 32;
+    const bCtx = beamCanvas.getContext("2d");
+    if (bCtx) {
+      const grad = bCtx.createLinearGradient(0, 0, 0, 32);
+      grad.addColorStop(0, "rgba(45, 212, 191, 0)");
+      grad.addColorStop(0.5, "rgba(255, 255, 255, 0.95)");
+      grad.addColorStop(1, "rgba(45, 212, 191, 0)");
+      bCtx.fillStyle = grad;
+      bCtx.fillRect(0, 0, 128, 32);
+    }
+    const beamTex = new THREE.CanvasTexture(beamCanvas);
+    const beamMat = new THREE.MeshBasicMaterial({
+      map: beamTex,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      opacity: 0.85,
+    });
+    const scanBeamMesh = new THREE.Mesh(beamGeo, beamMat);
+    scanBeamMesh.position.z = 0.28;
+    shieldMesh.add(scanBeamMesh);
+
     const ringGeo = new THREE.RingGeometry(0.35, 0.4, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0x2dd4bf,
@@ -461,20 +487,25 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
           }
         }
 
+        scanBeamMesh.visible = mode === "scanning";
+
         if (mode === "scanning") {
+          const beamCycle = (time % 2.4) / 2.4;
+          scanBeamMesh.position.y = 1.15 - beamCycle * 2.3;
+
           icoMesh.visible = true;
-          icoMesh.rotation.y += delta * 0.6;
-          icoMesh.rotation.x += delta * 0.4;
+          icoMesh.rotation.y += delta * 0.7;
+          icoMesh.rotation.x += delta * 0.45;
           (icoMesh.material as THREE.MeshBasicMaterial).opacity = 0.5;
 
-          shieldMesh.scale.set(0.85, 0.85, 0.85);
+          shieldMesh.scale.set(0.88, 0.88, 0.88);
 
           for (let i = 0; i < ringMeshes.length; i++) {
-            const phase = ((time * 0.8 + i * 0.33) % 1.0);
-            const rScale = 0.5 + phase * 2.8;
+            const phase = ((time * 0.75 + i * 0.33) % 1.0);
+            const rScale = 0.6 + phase * 2.6;
             ringMeshes[i].visible = true;
             ringMeshes[i].scale.set(rScale, rScale, 1);
-            (ringMeshes[i].material as THREE.MeshBasicMaterial).opacity = (1 - phase) * 0.65;
+            (ringMeshes[i].material as THREE.MeshBasicMaterial).opacity = (1 - phase) * 0.7;
           }
         } else {
           icoMesh.visible = transitionTime < 0.8;
@@ -494,6 +525,9 @@ export function VerdictOrb({ scan, className = "", style = {} }: VerdictOrbProps
         qDotGeo.dispose();
         icoGeo.dispose();
         ringGeo.dispose();
+        beamGeo.dispose();
+        beamTex.dispose();
+        beamMat.dispose();
         leftGeo.dispose();
         rightGeo.dispose();
         leftEdgesGeo.dispose();

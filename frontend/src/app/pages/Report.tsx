@@ -88,10 +88,10 @@ function RiskGauge({ scan }: { scan: ScanResponse }) {
       </svg>
       <div className="gauge-score">
         {scanning ? (
-          <>
-            <LoaderCircle className="spin" />
+          <div className="gauge-scanning-content">
+            <LoaderCircle className="spin" style={{ width: "2rem", height: "2rem", margin: "0 auto 0.35rem", color: "var(--primary)" }} />
             <span>Scanning...</span>
-          </>
+          </div>
         ) : unknown ? (
           <>
             <strong>—</strong>
@@ -156,7 +156,7 @@ function SummaryCard({ scan }: { scan: ScanResponse }) {
           </Badge>
         ) : (
           <Badge tone="unknown">
-            <LoaderCircle className="spin" />
+            <LoaderCircle className="spin" style={{ width: "0.95rem", height: "0.95rem" }} />
             Scanning...
           </Badge>
         )}
@@ -267,11 +267,11 @@ function ScanProgress({ scan }: { scan: ScanResponse }) {
   return (
     <Card className="progress-card" aria-live="polite">
       <div className="row-between">
-        <span>
-          <LoaderCircle className="spin" />
-          Scanning link
+        <span style={{ display: "inline-flex", alignItems: "center", gap: "0.55rem" }}>
+          <LoaderCircle className="spin" style={{ width: "1.15rem", height: "1.15rem", color: "var(--primary)", flexShrink: 0 }} />
+          <span>Scanning link...</span>
         </span>
-        <strong>
+        <strong style={{ fontFamily: "JetBrains Mono, monospace", color: "var(--primary)" }}>
           <CountUp target={scan.progress.completed_checks} /> of {scan.progress.total_checks} checks complete
         </strong>
       </div>
@@ -491,6 +491,7 @@ function FeatureChart({ scan }: { scan: ScanResponse }) {
               tickLine={false}
             />
             <ChartTooltip
+              cursor={{ fill: "color-mix(in hsl, var(--primary) 12%, transparent)", radius: 6 }}
               formatter={(value, _name, item) => [
                 `Impact: ${Number(value).toFixed(2)} · Raw: ${String(item.payload.value)}`,
                 "Feature",
