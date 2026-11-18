@@ -47,25 +47,23 @@ export function Home() {
               domains and SSL problems, without ever opening it on your device.
             </p>
             <UrlScanForm />
-            {CONFIG.USE_MOCK && (
-              <div className="examples">
-                <span>Try an example</span>
-                {[
-                  ["google.com", "safe demo"],
-                  ["paypal-secure-login.xyz", "phishing demo"],
-                  ["example-shop.com/offer", "suspicious demo"],
-                ].map(([url, label]) => (
-                  <button
-                    key={url}
-                    className="example-chip"
-                    onClick={() => window.dispatchEvent(new CustomEvent("safelinks:fill", { detail: url }))}
-                  >
-                    {url}
-                    <small>{label}</small>
-                  </button>
-                ))}
-              </div>
-            )}
+            <div className="examples">
+              <span>Try an example</span>
+              {[
+                ["google.com", "safe demo"],
+                ["paypal-secure-login.xyz", "phishing demo"],
+                ["example-shop.com/offer", "suspicious demo"],
+              ].map(([url, label]) => (
+                <button
+                  key={url}
+                  className="example-chip"
+                  onClick={() => window.dispatchEvent(new CustomEvent("safelinks:fill", { detail: url }))}
+                >
+                  {url}
+                  <small>{label}</small>
+                </button>
+              ))}
+            </div>
             <p className="fine-print">
               We never open the link on your device. Results are automated and can be wrong.
             </p>
