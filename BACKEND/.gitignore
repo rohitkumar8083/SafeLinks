@@ -25,6 +25,7 @@ htmlcov/
 # ML models and data (preserve directory placeholders)
 app/ml/model/*
 !app/ml/model/.gitkeep
+!app/ml/model/phishing_model.joblib
 app/ml/data/*
 !app/ml/data/.gitkeep
 !app/ml/data/README.md

@@ -28,6 +28,7 @@ from app.schemas.scan import (
 from app.services.checks.base import BaseCheck, CheckOutcome
 from app.services.checks.registry import CHECK_REGISTRY, build_initial_checks
 from app.services.context import ScanContext
+from app.services.gemini_analyst import generate_ai_analysis
 from app.services.risk_scoring import compute_scan_result
 from app.services.url_normalizer import parse_and_normalize_url
 
@@ -219,6 +220,26 @@ class ScanOrchestrator:
                 outcomes=outcomes,
                 target_domain=parsed.registered_domain,
             )
+
+            # Optional: Enhance summary and recommendations using Gemini AI if configured
+            if getattr(self.settings, "GEMINI_API_KEY", None):
+                done_details = [
+                    f"{c.name}: {c.detail}"
+                    for c in current_scan.checks
+                    if c.status == CheckStatus.DONE and c.detail
+                ]
+                ai_data = await generate_ai_analysis(
+                    url=parsed.normalized_url,
+                    risk_score=scan_result.risk_score,
+                    verdict=scan_result.verdict.value,
+                    findings=done_details,
+                    http_client=ctx.http_client,
+                    api_key=self.settings.GEMINI_API_KEY,
+                    model=getattr(self.settings, "GEMINI_MODEL", "gemini-3-flash-preview"),
+                )
+                if ai_data:
+                    scan_result.summary = ai_data["summary"]
+                    scan_result.recommendations = ai_data["recommendations"]
 
             await self.repo.set_result(scan_id, scan_result, completed_at)
             logger.info("Completed scan %s with verdict %s", scan_id, scan_result.verdict.value)

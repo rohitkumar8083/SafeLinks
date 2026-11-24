@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     VIRUSTOTAL_API_KEY: str | None = None
     URLHAUS_AUTH_KEY: str | None = None
 
+    # Gemini AI Threat Intelligence
+    GEMINI_API_KEY: str | None = None
+    GEMINI_MODEL: str = "gemini-3-flash-preview"
+
     # Storage & Lifecycle
     SCAN_TTL_MINUTES: int = 60
     MAX_STORED_SCANS: int = 5000
