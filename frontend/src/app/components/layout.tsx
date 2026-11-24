@@ -99,10 +99,14 @@ function checkApiHealth() {
   healthCheck ??= scanApi
     .health()
     .then(() => ({ online: true as const }))
-    .catch((error: unknown) => ({
-      online: false as const,
-      error: error instanceof Error ? error.message : "The API health check failed.",
-    }));
+    .catch((error: unknown) => {
+      // Reset so a transient cold-start failure is not permanently cached
+      healthCheck = null;
+      return {
+        online: false as const,
+        error: error instanceof Error ? error.message : "The API health check failed.",
+      };
+    });
   return healthCheck;
 }
 

@@ -59,6 +59,6 @@ export const realClient: ScanApi = {
     return request(`/scans/${encodeURIComponent(scanId)}`, scanResponseSchema);
   },
   health(): Promise<HealthResponse> {
-    return request("/health", healthResponseSchema, {}, 5_000);
+    return request("/health", healthResponseSchema, {}, 25_000);
   },
 };
